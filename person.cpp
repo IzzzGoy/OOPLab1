@@ -23,7 +23,7 @@ bool Person::tryToRecruting(Company* company) //false - не смог попас
         {
             for(size_t i = 0; i < companis.size(); i++)
             {
-                if(companis[i]->company == company)return true;
+                if(companis[i]->company == company)return false;
             }
             companis.push_back(new CompanyInfo(company));
             return true;
