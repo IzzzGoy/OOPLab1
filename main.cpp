@@ -1,5 +1,4 @@
 #include <QCoreApplication>
-#include <fstream>
 #include <iostream>
 #include <company.h>
 #include <vector>
@@ -7,15 +6,8 @@
 int main()
 {
     ////////////////////////////////////////////////
-    std::ofstream output("LabLog.txt");
     std::vector<Person*> candidates(6);
     std::vector<Company*> companis(6);
-    /////////////////////////////////////////////
-    if(!output.is_open())
-    {
-        std::cout << "trouble with file!" << std::endl;
-        return -1;
-    }
     ///////////////////////////////////////////////
     for(uint8_t i = 0; i < 6; i++)
     {
@@ -31,61 +23,104 @@ int main()
 
     /////////////////////////////////////////////
 
-    //Проверка возможноможности найма
-    if(companis[0]->recruting(candidates[0]))
+    //Проверка возможноможности найма /must be true
+    if(companis[0]->recrutingPerson(candidates[0]))
     {
-        output << "Recruting was sucsesful!\n";
+        std::cout << "Recruting was sucsesful!\n";
     }
     else
     {
-        output << "Truoble with recruting\n";
+        std::cout << "Truoble with recruting (wrong)\n";
     }
 
-    //Проверка того, что один работник не может быть задействован в более чем 5ти компаниях
-    companis[1]->recruting(candidates[0]);
-    companis[2]->recruting(candidates[0]);
-    companis[3]->recruting(candidates[0]);
-    companis[4]->recruting(candidates[0]);
-    if(companis[5]->recruting(candidates[0]))
+    //Проверка не возможности подтверждения нейма без согласия Person /must be false
+    if(companis[0]->recrutingPerson(candidates[0]))
     {
-        output << "Wrong nuber of companis\n";
+        std::cout << "Recruting fail (wrong)\n";
     }
     else
     {
-        output << "Reached limit of companis\n";
+        std::cout << "Normal reaction!\n";
     }
 
-    //Проверка возможности проверить, работает ли сотрудник
+    //Проверка подтверждения рекрутинга /must be true
+    if(candidates[0]->agreeToRecruting(companis[0]))
+    {
+        std::cout << "He can agree!\n";
+    }
+    else
+    {
+        std::cout << "He can`t agree (wrong)\n";
+    }
+
+    //Проверка возможности проверить, работает ли сотрудник /must be true
     if(companis[0]->isPerson(candidates[0]->getName()))
     {
-        output << "We can find him\n";
+        std::cout << "We can find him\n";
     }
     else
     {
-        output << "Truble with searching\n";
+        std::cout << "Truble with searching (wrong)\n";
+    }
+
+    //Проверка возможности подать заявление /must be true
+    if(candidates[1]->tryToRecruting(companis[0]))
+    {
+        std::cout << "He can try!\n";
+    }
+    else
+    {
+        std::cout << "He can`t try (wrong)\n";
+    }
+
+    //Проверка невозможности самозачисления, подав доки второй раз /must be false
+    if(candidates[1]->tryToRecruting(companis[0]))
+    {
+        std::cout << "He can cheat!(wrong)\n";
+    }
+    else
+    {
+        std::cout << "He can`t cheat! \n";
+    }
+
+    //Проверка невозможности самозачисления, пытаясь "согласиться на предложение" /must be false
+    if(candidates[1]->agreeToRecruting(companis[0]))
+    {
+        std::cout << "He can <<agree>>!(wrong)\n";
+    }
+    else
+    {
+        std::cout << "He can`t <<agree>>! \n";
     }
 
     //Проверка возможности нахождения сотрудника по ФИО
     if(companis[0]->searchForPerson(candidates[0]->getName()) == candidates[0])
     {
-        output << "This is that person\n";
+        std::cout << "This is that person\n";
     }
     else
     {
-        output << "We can`t retern him\n";
+        std::cout << "We can`t retern him\n";
     }
 
     //Проверка возможности увольнения сотрудника
-    if(companis[0]->sack(candidates[0]->getName()))
+    if(companis[0]->personSackFromCompany(candidates[0]))
     {
-        output << "Person was sacked\n";
+        std::cout << "Person was sacked\n";
     }
     else
     {
-        output << "Error with sackking\n";
+        std::cout << "Error with sackking\n";
     }
 
 
+    /////////////////////////////////////////////
+    std::cout << "Companis:\n";
+    for(size_t i = 0; i < companis.size(); i++)
+    {
+        std::cout << i + 1 + ". ";
+        companis[i]->showCompanyInfo();
+    }
     /////////////////////////////////////////////
     for(uint8_t i = 0; i < 6; i++)
     {
@@ -95,6 +130,5 @@ int main()
     {
         delete companis[i];
     }
-    output.close();
     return 0;
 }
